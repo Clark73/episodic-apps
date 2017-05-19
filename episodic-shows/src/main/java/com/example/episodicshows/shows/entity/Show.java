@@ -1,31 +1,37 @@
 package com.example.episodicshows.shows.entity;
 
+import com.example.episodicshows.model.GenericEntity;
+
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 @Entity(name = "shows")
-public class Show {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+public class Show extends GenericEntity {
 
     private String name;
 
     public Show() {
     }
 
+    @Override
+    public String toString() {
+        return "Show{" +
+                "id=" + super.getId() +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
     public Show(String name) {
         this.name = name;
     }
 
+    @Override
     public long getId() {
-        return id;
+        return super.getId();
     }
 
+    @Override
     public void setId(long id) {
-        this.id = id;
+        super.setId(id);
     }
 
     public String getName() {

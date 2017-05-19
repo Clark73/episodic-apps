@@ -1,16 +1,8 @@
 package com.example.episodicshows.shows.entity;
 
 
+import com.example.episodicshows.model.GenericRepository;
 
-import org.springframework.data.repository.CrudRepository;
+public interface ShowsRepository extends GenericRepository<Show, Long> {
 
-import java.util.List;
-import java.util.stream.Stream;
-
-public interface ShowsRepository extends CrudRepository<Show, Long> {
-    List<Show> findAll();
-
-    default Stream<Show> findAllAsStream() {
-        return findAll().stream();
-    }
 }

@@ -1,14 +1,12 @@
 package com.example.episodicshows.users.entity;
 
+import com.example.episodicshows.model.GenericEntity;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "users")
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+public class User extends GenericEntity{
 
     private String email;
 
@@ -20,11 +18,11 @@ public class User {
     }
 
     public long getId() {
-        return id;
+        return super.getId();
     }
 
     public void setId(long id) {
-        this.id = id;
+        super.setId(id);
     }
 
     public String getEmail() {

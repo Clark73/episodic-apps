@@ -1,4 +1,4 @@
-package com.example.episodicshows.users;
+package com.example.episodicshows.shows;
 
 
 
