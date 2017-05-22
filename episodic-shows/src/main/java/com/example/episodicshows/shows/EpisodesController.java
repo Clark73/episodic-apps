@@ -1,10 +1,13 @@
 package com.example.episodicshows.shows;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
+
 import com.example.episodicshows.shows.entity.Episode;
 import com.example.episodicshows.shows.entity.EpisodesRepository;
-import com.example.episodicshows.shows.entity.ShowViews;
-import com.example.episodicshows.shows.entity.ShowsRepository;
-import com.fasterxml.jackson.annotation.JsonView;
+import com.example.episodicshows.shows.model.EpisodeModel;
+import com.example.episodicshows.shows.service.EpisodeService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,22 +17,26 @@ import java.util.List;
 @RequestMapping("/shows/{showId}/episodes")
 public class EpisodesController {
 
-    private final EpisodesRepository episodesRepository;
+    private final EpisodeService episodeService;
 
-    public EpisodesController(EpisodesRepository episodesRepository) {
-        this.episodesRepository = episodesRepository;
+
+    public EpisodesController(EpisodeService episodeService) {
+        this.episodeService = episodeService;
     }
 
     @PostMapping("")
-    public Episode createEpisode(@PathVariable long showId, @RequestBody Episode episode){
+    public ResponseEntity<EpisodeModel> createEpisode(@PathVariable long showId, @RequestBody Episode episode){
         episode.setShowId(showId);
-        return episodesRepository.save(episode);
+        EpisodeModel em = episodeService.createEpisode(episode);
+        em.add(linkTo(methodOn(this.getClass()).createEpisode(showId, new Episode())).withSelfRel());
+        em.add(linkTo(methodOn(ShowsController.class).getShow(showId)).withRel("get_show"));
+        return new ResponseEntity<>(em, HttpStatus.OK);
     }
 
-    @GetMapping("")
-    @Transactional(readOnly = true)
-    public List<Episode> getEpisodesById( @PathVariable long showId ) {
-        return episodesRepository.findAllByShowId(showId);
-    }
+//    @GetMapping("")
+//    @Transactional(readOnly = true)
+//    public List<Episode> getEpisodesByShowId( @PathVariable long showId ) {
+//        return episodesRepository.findAllByShowId(showId);
+//    }
 
 }

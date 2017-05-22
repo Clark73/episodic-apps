@@ -1,4 +1,4 @@
-package com.example.episodicshows.users;
+package com.example.episodicshows.viewings;
 
 import com.example.episodicshows.shows.entity.Episode;
 import com.example.episodicshows.shows.entity.EpisodesRepository;
@@ -82,14 +82,14 @@ public class ViewingControllerTest {
 
         this.mvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].show.id", is((int) show1Id)))
-                .andExpect(jsonPath("$.[0].show.name", is("Game of Thrones")))
-                .andExpect(jsonPath("$.[0].episode.id", is((int) ep1Id)))
-                .andExpect(jsonPath("$.[0].episode.seasonNumber", is(1)))
-                .andExpect(jsonPath("$.[0].episode.episodeNumber", is(1)))
-                .andExpect(jsonPath("$.[0].episode.title", is("S1 E1")))
-                .andExpect(jsonPath("$.[0].updatedAt", is(date.toString())))
-                .andExpect(jsonPath("$.[0].timeCode", is(50)));
+                .andExpect(jsonPath("$.recentViewings.[0].show.id", is((int) show1Id)))
+                .andExpect(jsonPath("$.recentViewings.[0].show.name", is("Game of Thrones")))
+                .andExpect(jsonPath("$.recentViewings.[0].episode.id", is((int) ep1Id)))
+                .andExpect(jsonPath("$.recentViewings.[0].episode.seasonNumber", is(1)))
+                .andExpect(jsonPath("$.recentViewings.[0].episode.episodeNumber", is(1)))
+                .andExpect(jsonPath("$.recentViewings.[0].episode.title", is("S1 E1")))
+                .andExpect(jsonPath("$.recentViewings.[0].updatedAt", is(date.toString())))
+                .andExpect(jsonPath("$.recentViewings.[0].timeCode", is(50)));
     }
 
     @Transactional

@@ -1,63 +1,47 @@
 package com.example.episodicshows.viewings;
 
-import com.example.episodicshows.shows.entity.Episode;
-import com.example.episodicshows.shows.entity.EpisodesRepository;
-import com.example.episodicshows.shows.entity.Show;
-import com.example.episodicshows.shows.entity.ShowsRepository;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
+
+import com.example.episodicshows.model.GenericModel;
 import com.example.episodicshows.viewings.entity.Viewing;
-import com.example.episodicshows.viewings.entity.ViewingsRepository;
-import com.example.episodicshows.viewings.model.RecentViewing;
+import com.example.episodicshows.viewings.model.RecentViewings;
+import com.example.episodicshows.viewings.service.ViewingsService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users/{userId}")
 public class ViewingsController {
 
-    private ViewingsRepository viewingsRepository;
-    private EpisodesRepository episodesRepository;
-    private ShowsRepository showsRepository;
+    private final ViewingsService viewingsService;
 
-    public ViewingsController(ViewingsRepository viewingsRepository, EpisodesRepository episodesRepository, ShowsRepository showsRepository) {
-        this.viewingsRepository = viewingsRepository;
-        this.episodesRepository = episodesRepository;
-        this.showsRepository = showsRepository;
+    public ViewingsController(ViewingsService viewingsService) {
+        this.viewingsService = viewingsService;
     }
 
     @PatchMapping("/viewings")
-    public void updateOrCreateViewingStatus(@PathVariable long userId, @RequestBody Viewing viewing) {
-        viewing.setShowId(episodesRepository.findOne(viewing.getEpisodeId()).getShowId());
-        Viewing existingView = this.viewingsRepository.findByUserIdAndShowId(userId, viewing.getShowId());
+    public ResponseEntity<GenericModel> updateOrCreateViewingStatus(@PathVariable long userId, @RequestBody Viewing viewing) {
+        viewing.setUserId(userId);
+        viewingsService.updateOrCreateViewing(viewing);
 
-        if (existingView != null) {
-            existingView.setEpisodeId(viewing.getEpisodeId());
-            existingView.setUpdatedAt(viewing.getUpdatedAt());
-            existingView.setTimeCode(viewing.getTimeCode());
-            this.viewingsRepository.save(existingView);
-        } else {
-            viewing.setUserId(userId);
-            this.viewingsRepository.save(viewing);
-        }
+        GenericModel gm = new GenericModel();
+        gm.add(linkTo(methodOn(this.getClass()).updateOrCreateViewingStatus(userId, new Viewing())).withSelfRel());
+        gm.add(linkTo(methodOn(this.getClass()).getRecentlyViewed(userId)).withRel("recently_viewed"));
+
+        return new ResponseEntity<>(gm, HttpStatus.OK);
     }
 
     @GetMapping("/recently-watched")
     @Transactional(readOnly = true)
-    public List<RecentViewing> getRecentlyViewed (@PathVariable long userId) {
+    public ResponseEntity<RecentViewings> getRecentlyViewed (@PathVariable long userId) {
+        RecentViewings recentViewings = new RecentViewings(viewingsService.getRecentViewings(userId));
+        recentViewings.add(linkTo(methodOn(this.getClass()).getRecentlyViewed(userId)).withSelfRel());
 
-        Map<Long, Episode> episodes = episodesRepository.findAllAsMap();
-        Map<Long, Show> shows = showsRepository.findAllAsMap();
-
-        return viewingsRepository.findAllByUserIdAsStream(userId)
-                .map(v -> new RecentViewing(
-                        shows.get(v.getShowId()),
-                        episodes.get(v.getEpisodeId()),
-                        v.getUpdatedAt(),
-                        v.getTimeCode()))
-                .collect(Collectors.toList());
+        return new ResponseEntity<>(recentViewings, HttpStatus.OK);
     }
 
 }
