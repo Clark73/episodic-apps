@@ -17,9 +17,6 @@ public class Episode extends GenericEntity {
     @JsonIgnore()
     private long showId;
 
-    @Transient
-    private String title;
-
     public Episode() {
     }
 
@@ -61,11 +58,5 @@ public class Episode extends GenericEntity {
         this.showId = showId;
     }
 
-    public String getTitle() {
-        return String.format("S%d E%d", seasonNumber, episodeNumber);
-    }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
 }
