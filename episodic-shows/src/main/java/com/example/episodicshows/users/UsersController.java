@@ -7,6 +7,7 @@ import com.example.episodicshows.users.model.UserView;
 import com.example.episodicshows.users.service.UsersService;
 import com.example.episodicshows.viewings.ViewingsController;
 import com.example.episodicshows.viewings.entity.Viewing;
+import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +46,7 @@ public class UsersController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<UserView>> getUsers() {
+    public ResponseEntity<Resources<UserView>> getUsers() {
         return new ResponseEntity<>(usersService.getAllUsers(), HttpStatus.OK);
     }
 

@@ -7,6 +7,7 @@ import com.example.episodicshows.model.GenericModel;
 import com.example.episodicshows.viewings.entity.Viewing;
 import com.example.episodicshows.viewings.model.RecentViewings;
 import com.example.episodicshows.viewings.service.ViewingsService;
+import com.sun.media.sound.InvalidDataException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,10 +27,16 @@ public class ViewingsController {
     @PatchMapping("/viewings")
     public ResponseEntity<GenericModel> updateOrCreateViewingStatus(@PathVariable long userId, @RequestBody Viewing viewing) {
         viewing.setUserId(userId);
-        viewingsService.updateOrCreateViewing(viewing);
-
         GenericModel gm = new GenericModel();
         gm.add(linkTo(methodOn(this.getClass()).updateOrCreateViewingStatus(userId, new Viewing())).withSelfRel());
+
+        try {
+            viewingsService.updateOrCreateViewing(viewing);
+        } catch (InvalidDataException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(gm, HttpStatus.BAD_REQUEST);
+        }
+
         gm.add(linkTo(methodOn(this.getClass()).getRecentlyViewed(userId)).withRel("recently_viewed"));
 
         return new ResponseEntity<>(gm, HttpStatus.OK);

@@ -6,6 +6,7 @@ import com.example.episodicshows.users.UsersController;
 import com.example.episodicshows.users.entity.User;
 import com.example.episodicshows.users.entity.UsersRepository;
 import com.example.episodicshows.users.model.UserView;
+import org.springframework.hateoas.Resources;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +23,8 @@ public class UsersService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserView> getAllUsers() {
-        return usersRepository.findAllAsStream()
+    public Resources<UserView> getAllUsers() {
+        List<UserView> ul = usersRepository.findAllAsStream()
                 .map(u -> new UserView(
                         u.getId(),
                         u.getEmail()))
@@ -32,12 +33,17 @@ public class UsersService {
                     return u;
                 })
                 .collect(Collectors.toList());
+        return new Resources<>(ul);
     }
 
     @Transactional(readOnly = true)
     public UserView getUserById(long userId) {
         User user = usersRepository.findOne(userId);
-        return new UserView(user.getId(), user.getEmail());
+        if ( user != null ) {
+            return new UserView(user.getId(), user.getEmail());
+        } else {
+            return null;
+        }
     }
 
     public UserView createUser (User user) {

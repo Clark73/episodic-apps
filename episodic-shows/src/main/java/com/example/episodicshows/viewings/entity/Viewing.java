@@ -23,6 +23,13 @@ public class Viewing extends GenericEntity {
     public Viewing() {
     }
 
+    public Viewing(long userId, long episodeId, LocalDateTime updatedAt, int timeCode) {
+        this.userId = userId;
+        this.episodeId = episodeId;
+        this.updatedAt = updatedAt;
+        this.timeCode = timeCode;
+    }
+
     public Viewing(long userId, long showId, long episodeId, LocalDateTime updatedAt, int timeCode) {
         this.userId = userId;
         this.showId = showId;
@@ -30,6 +37,8 @@ public class Viewing extends GenericEntity {
         this.updatedAt = updatedAt;
         this.timeCode = timeCode;
     }
+
+
 
     public long getUserId() {
         return userId;

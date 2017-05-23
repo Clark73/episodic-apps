@@ -1,5 +1,6 @@
 package com.example.episodicshows.viewings;
 
+import com.example.episodicshows.TestBase;
 import com.example.episodicshows.shows.entity.Episode;
 import com.example.episodicshows.shows.entity.EpisodesRepository;
 import com.example.episodicshows.shows.entity.Show;
@@ -31,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
-public class ViewingControllerTest {
+public class ViewingControllerTest extends TestBase {
 
     @Autowired
     private MockMvc mvc;

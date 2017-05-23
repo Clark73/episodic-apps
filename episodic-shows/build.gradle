@@ -29,6 +29,8 @@ repositories {
 
 
 dependencies {
+	compile("org.springframework.amqp:spring-rabbit-junit:1.7.2.RELEASE")
+	compile("org.springframework.boot:spring-boot-starter-amqp")
 
     compile("org.flywaydb:flyway-core:4.2.0")
 
